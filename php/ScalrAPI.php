@@ -75,21 +75,23 @@ class ScalrAPI
 		
 		$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-		curl_close($ch);
-
 		$response = json_decode($response);
 		$error = null;
-
-		if ($status >= 400 || $status == 0) 
+		
+		if ($status >= 400 || $status == 0 || isset($response->errors)) 
 		{
-			$this->errors[] = $error = curl_error($ch);
-			throw new Exception("Error ($status): $error", $status);
+			if ($status == 0) {
+				$error = curl_error($ch);
+			} else {
+				$error = isset($response->errors) ? $response->errors[0]->message : $status;	
+			}
 		}
 		
-		if (isset($response->errors)) 
+		if ($error) 
 		{
-			$this->errors = $response->errors;
-			throw new Exception($response->errors[0]->code);
+			curl_close($ch);
+			$this->errors = $error;
+			throw new Exception($error);
 		}
 		
 		return $response;
