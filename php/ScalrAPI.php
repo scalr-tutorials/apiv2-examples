@@ -82,7 +82,8 @@ class ScalrAPI
 		if ($status >= 400 || $status == 0) 
 		{
 			$this->errors = $response->errors;
-			throw new Exception("Error$status", $status);
+			$error = curl_error($ch);
+			throw new Exception("Error ($status): $error", $status);
 		}
 		
 		if (isset($response->errors)) 
