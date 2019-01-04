@@ -56,6 +56,9 @@ class ScalrApiClient(object):
 
     def post(self, *args, **kwargs):
         return self.session.post(*args, **kwargs).json()["data"]
+    
+    def patch(self, *args, **kwargs):
+        return self.session.patch(*args, **kwargs).json()["data"]
 
     def _fuzz_ids(self, data):
         """
